@@ -30,7 +30,7 @@ export class MemexContinuousSync extends ContinuousSync {
         }
 
         if (options.useEncryption && !options.secretStore) {
-            throw new Error(`MemexInitialSync created wanting encryption, but missing a secret store`)
+            throw new Error(`MemexContinuousSync created wanting encryption, but missing a secret store`)
         }
     }
 
