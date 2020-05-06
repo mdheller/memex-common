@@ -52,7 +52,7 @@ export class WorldbrainAuthService implements AuthService {
     }
 
     async refreshUserInfo() {
-        const firebaseUser = await this._waitForCurrentUser(500)
+        const firebaseUser = await this._waitForCurrentUser(1000)
         if (!firebaseUser) {
             console.warn(`Failed to refreshUserInfo`)
             return

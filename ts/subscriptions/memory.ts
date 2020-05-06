@@ -29,13 +29,15 @@ export class MemorySubscriptionsService
 
     async getCheckoutLink(
         options: SubscriptionCheckoutOptions,
-    ): Promise<string> {
-        return `https://checkout.link?plan=${options.planId}`
+    ): Promise<{url:string}> {
+        return {url:`https://checkout.link?plan=${options.planId}`
+    }
     }
 
     async getManageLink(
         options?: SubscriptionCheckoutOptions,
-    ): Promise<string> {
-        return `https://manage.link`
+    ): Promise<{ "access_url":string }> {
+        return {"access_url":`https://manage.link` }
     }
+
 }

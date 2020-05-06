@@ -1,7 +1,7 @@
 export interface SubscriptionsService {
     getCurrentUserClaims(forceRefresh?: boolean): Promise<Claims | null>
-    getCheckoutLink(options: SubscriptionCheckoutOptions): Promise<string>
-    getManageLink(options?: SubscriptionCheckoutOptions): Promise<string>
+    getCheckoutLink(options: SubscriptionCheckoutOptions): Promise<{ url: string }>
+    getManageLink(options?: SubscriptionCheckoutOptions): Promise<{ access_url: string }>
 }
 
 export interface Claims {
