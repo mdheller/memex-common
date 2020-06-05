@@ -80,6 +80,11 @@ export class MemexInitialSync extends InitialSync {
     async preSync(options: InitialSyncInfo) {
         const { secretStore, continuousSync } = this.options
 
+        options.fastSync.processNonFatalError = ({ source, error }) => {
+            const fatal = !(source === 'create-object' && error?.code === 'SQLITE_CONSTRAINT')
+            return { fatal }
+        }
+
         if (options.role === 'sender') {
             if (this.options.generateLoginToken) {
                 const userPackage: SyncUserPackage = {
