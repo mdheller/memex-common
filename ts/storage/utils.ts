@@ -68,10 +68,15 @@ export function createPassiveDataChecker(dependencies: {
         ): Promise<boolean> => {
             return !!(await dependencies.storageManager
                 .collection(collection)
-                .findObject(where))
+                .countObjects(where))
         }
 
-        return !(await check('pageListEntries', { pageUrl: params.pk }))
+        return !(
+            await check('tags', { url: params.pk }) ||
+            await check('bookmarks', { url: params.pk }) ||
+            await check('annotations', { pageUrl: params.pk }) ||
+            await check('pageListEntries', { pageUrl: params.pk })
+        )
     }
 }
 

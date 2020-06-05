@@ -82,7 +82,7 @@ export class MemexInitialSync extends InitialSync {
         const { secretStore, continuousSync } = this.options
 
         options.fastSync.processNonFatalError = ({ source, error }) => {
-            const fatal = !(source === 'create-object' && error?.code === 'SQLITE_CONSTRAINT')
+            const fatal = !(source === 'create-object' && (error as any)?.code === 'SQLITE_CONSTRAINT')
             if (!fatal) {
                 this.processCreationConstraintError?.(error)
             }
