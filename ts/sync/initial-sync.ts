@@ -33,6 +33,7 @@ type SyncUserPackage =
 export class MemexInitialSync extends InitialSync {
     public filterBlobs = true
     public filterPassiveData = false
+    public processCreationConstraintError?: (error: Error) => void
 
     constructor(
         private options: InitialSyncDependencies & {
@@ -82,6 +83,9 @@ export class MemexInitialSync extends InitialSync {
 
         options.fastSync.processNonFatalError = ({ source, error }) => {
             const fatal = !(source === 'create-object' && error?.code === 'SQLITE_CONSTRAINT')
+            if (!fatal) {
+                this.processCreationConstraintError?.(error)
+            }
             return { fatal }
         }
 
