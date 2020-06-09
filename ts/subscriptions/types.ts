@@ -18,6 +18,7 @@ export type SubscriptionMap = {
     [key in UserPlan]?: {
         expiry: number, // Epoch in seconds
         status?: SubscriptionStatus,
+        donation?:number,
     }
 }
 export type FeatureMap = {
@@ -25,7 +26,7 @@ export type FeatureMap = {
         expiry: number, // Epoch in seconds
     }
 }
-export type UserFeature = 'backup' | 'sync'
+export type UserFeature = 'backup' | 'sync' | 'beta'
 export type UserPlan =
     | 'pro-monthly'
     | 'pro-yearly'
@@ -33,4 +34,5 @@ export type UserPlan =
 
 export interface SubscriptionCheckoutOptions {
     planId: UserPlan
+    pioneerDonationAmount?: number
 }
