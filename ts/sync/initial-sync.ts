@@ -6,7 +6,7 @@ import {
     InitialSyncDependencies,
     InitialSyncInfo,
 } from '@worldbrain/storex-sync/lib/integration/initial-sync'
-import { createPassiveDataChecker } from '../storage/utils'
+import { createPassiveDataChecker, isTermsField } from '../storage/utils'
 import { SyncSecretStore } from './secrets'
 import { MemexContinuousSync } from './continuous-sync';
 import { SyncInfoStorage } from './storage';
@@ -61,8 +61,19 @@ export class MemexInitialSync extends InitialSync {
         const blobFilter = _createBlobPreSendFilter({
             storageManager: this.dependencies.storageManager,
         })
+        const termsFilter = _createTermsPreSendFilter({
+            storageManager: this.dependencies.storageManager,
+        })
+        const fullTextFilter = _createFullTextPreSendFilter()
         const processor: FastSyncPreSendProcessor = async (params) => {
             let filteredObject = params.object
+            filteredObject = (await termsFilter({
+                ...params, object: filteredObject,
+            })).object
+            filteredObject = (await fullTextFilter({
+                ...params, object: filteredObject,
+            })).object
+
             if (this.filterBlobs) {
                 filteredObject = (await blobFilter({
                     ...params, object: filteredObject,
@@ -181,6 +192,33 @@ export function _createBlobPreSendFilter(dependencies: {
                 object[fieldName] = null
             }
         }
+        return { object }
+    }
+}
+
+export function _createTermsPreSendFilter(dependencies: {
+    storageManager: StorageManager
+}): FastSyncPreSendProcessor {
+    const registry = dependencies.storageManager.registry;
+    return async params => {
+        const collectionDefinition = registry.collections[params.collection]
+        const object = { ...params.object }
+        for (const fieldName of Object.keys(collectionDefinition.fields)) {
+            if (isTermsField({ collection: params.collection, field: fieldName })) {
+                delete object[fieldName]
+            }
+        }
+        return { object }
+    }
+}
+
+export function _createFullTextPreSendFilter(): FastSyncPreSendProcessor {
+    return async params => {
+        if (params.collection !== 'pages') {
+            return params
+        }
+        const object = { ...params.object }
+        delete object.text
         return { object }
     }
 }
